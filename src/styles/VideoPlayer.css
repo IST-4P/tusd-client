@@ -1,0 +1,248 @@
+.video-player-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.error-message {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 0, 0, 0.9);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  z-index: 1000;
+  font-size: 14px;
+}
+
+.video-content {
+  position: relative;
+  flex: 1;
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 6px);
+  overflow: hidden;
+}
+
+.video-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  cursor: pointer;
+}
+
+.video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Volume Control - Top Right Corner */
+.volume-control {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 15px;
+  border-radius: 25px;
+  z-index: 10;
+  transition: opacity 0.3s;
+}
+
+.volume-control:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.volume-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.volume-button:hover {
+  transform: scale(1.1);
+}
+
+.volume-slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 18px;
+  z-index: 5;
+}
+
+/* Quality Selector - Right Side */
+.quality-selector-side {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+  padding: 10px;
+}
+
+.quality-btn {
+  min-width: 60px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.quality-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.quality-btn.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border-color: white;
+}
+
+/* Custom Progress Bar - Bottom */
+.custom-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  z-index: 20;
+  transition: height 0.2s;
+}
+
+.custom-progress-bar:hover {
+  height: 10px;
+}
+
+.progress-filled {
+  height: 100%;
+  background: #ff0000;
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+.progress-filled::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background: #ff0000;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.custom-progress-bar:hover .progress-filled::after {
+  opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .quality-selector-side {
+    right: 10px;
+    gap: 8px;
+  }
+
+  .quality-btn {
+    min-width: 50px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .volume-control {
+    top: 15px;
+    right: 70px;
+    padding: 8px 12px;
+  }
+
+  .volume-button {
+    font-size: 20px;
+  }
+
+  .volume-slider {
+    width: 60px;
+  }
+}
+
+/* Hide on mobile when in landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+  .quality-selector-side {
+    padding: 5px;
+    gap: 6px;
+  }
+
+  .quality-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
