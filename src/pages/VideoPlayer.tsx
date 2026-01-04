@@ -1,6 +1,7 @@
 import Hls from "hls.js";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "../api/axios";
 import "../styles/VideoPlayer.css";
 
 interface QualityLevel {
@@ -22,17 +23,37 @@ function VideoPlayer() {
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(true);
+  const [playbackToken, setPlaybackToken] = useState<string>("");
+  const [manifestUrl, setManifestUrl] = useState<string>("");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
 
-  // Use proxy URL for local development to avoid CORS issues
-  const isDev = import.meta.env.DEV;
-  const videoBaseUrl = isDev
-    ? "/videos/hls"
-    : import.meta.env.VITE_VIDEO_BASE_URL;
-  const masterPlaylistUrl = `${videoBaseUrl}/${id}/master.m3u8`;
-  const thumbnailUrl = `${videoBaseUrl}/${id}/thumb.jpg`;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // Fetch playback token and URLs from API
+  useEffect(() => {
+    const fetchPlaybackData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(
+          `${apiBaseUrl}/media/playback?videoId=${id}`
+        );
+        const { manifestUrl, thumbnailUrl, playbackToken } = response.data.data;
+        setManifestUrl(manifestUrl);
+        setThumbnailUrl(thumbnailUrl);
+        setPlaybackToken(playbackToken);
+      } catch (err) {
+        setError("Failed to fetch playback data");
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPlaybackData();
+    }
+  }, [id, apiBaseUrl]);
 
   useEffect(() => {
-    if (!videoRef.current || !id) return;
+    if (!videoRef.current || !id || !manifestUrl || !playbackToken) return;
 
     const video = videoRef.current;
 
@@ -41,10 +62,13 @@ function VideoPlayer() {
         enableWorker: true,
         lowLatencyMode: false,
         backBufferLength: 90,
+        xhrSetup: (xhr, url) => {
+          xhr.setRequestHeader("Authorization", "Bearer " + playbackToken);
+        },
       });
 
       hlsRef.current = hls;
-      hls.loadSource(masterPlaylistUrl);
+      hls.loadSource(manifestUrl);
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
@@ -85,7 +109,7 @@ function VideoPlayer() {
       };
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       // For Safari native HLS support
-      video.src = masterPlaylistUrl;
+      video.src = manifestUrl;
       video.addEventListener("loadedmetadata", () => {
         setIsLoading(false);
       });
@@ -93,7 +117,7 @@ function VideoPlayer() {
       setError("HLS is not supported in this browser");
       setIsLoading(false);
     }
-  }, [id, masterPlaylistUrl]);
+  }, [id, manifestUrl, playbackToken]);
 
   const handleQualityChange = (level: number) => {
     if (hlsRef.current) {

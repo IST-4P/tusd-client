@@ -10,13 +10,4 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    proxy: {
-      "/videos": {
-        target: "https://hacmieu.xyz",
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
 });
