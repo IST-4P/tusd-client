@@ -16,7 +16,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login-postman", {
+      const response = await api.post("/auth/login", {
         username,
         password,
       });
@@ -29,7 +29,7 @@ function Login() {
     } catch (err: any) {
       console.error("Login error:", err);
       setError(
-        err.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại."
+        err.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.",
       );
     } finally {
       setLoading(false);
