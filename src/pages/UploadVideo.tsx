@@ -53,6 +53,7 @@ function UploadVideo() {
         metadata: {
           filename: uploadState.file.name,
           filetype: uploadState.file.type,
+          productId: "35953483-bf35-447c-b8d8-27a81eee8d46",
         },
         onBeforeRequest: function (req) {
           // Lấy đối tượng XMLHttpRequest bên dưới
